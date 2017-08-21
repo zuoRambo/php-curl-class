@@ -1,11 +1,13 @@
 # PHP Curl Class: HTTP requests made easy
 
-[![Build Status](https://api.travis-ci.org/php-curl-class/php-curl-class.svg)](https://travis-ci.org/php-curl-class/php-curl-class)
-[![Downloads](https://img.shields.io/packagist/dt/php-curl-class/php-curl-class.svg)](https://packagist.org/packages/php-curl-class/php-curl-class)
-
-[![License](https://img.shields.io/packagist/l/php-curl-class/php-curl-class.svg)](https://github.com/php-curl-class/php-curl-class/blob/master/LICENSE)
+[![](https://img.shields.io/github/release/php-curl-class/php-curl-class.svg)](https://github.com/php-curl-class/php-curl-class/releases/)
+[![](https://img.shields.io/github/license/php-curl-class/php-curl-class.svg)](https://github.com/php-curl-class/php-curl-class/blob/master/LICENSE)
+[![](https://img.shields.io/travis/php-curl-class/php-curl-class.svg)](https://travis-ci.org/php-curl-class/php-curl-class/)
+[![](https://img.shields.io/packagist/dt/php-curl-class/php-curl-class.svg)](https://github.com/php-curl-class/php-curl-class/releases/)
 
 PHP Curl Class makes it easy to send HTTP requests and integrate with web APIs.
+
+![PHP Curl Class screencast](www/img/screencast.gif)
 
 ---
 
@@ -139,6 +141,7 @@ echo $curl->responseHeaders['CoNTeNT-TyPE'] . "\n"; // image/png
 ```
 
 ```php
+// Clean up.
 $curl->close();
 ```
 
@@ -205,7 +208,6 @@ Curl::getInfo($opt = null)
 Curl::getOpt($option)
 Curl::getResponseCookie($key)
 Curl::head($url, $data = array())
-Curl::headerCallback($ch, $header)
 Curl::options($url, $data = array())
 Curl::patch($url, $data = array())
 Curl::post($url, $data = array(), $follow_303_with_post = false)
@@ -220,7 +222,7 @@ Curl::setCookieFile($cookie_file)
 Curl::setCookieJar($cookie_jar)
 Curl::setCookieString($string)
 Curl::setCookies($cookies)
-Curl::setDefaultDecoder($decoder = 'json')
+Curl::setDefaultDecoder($mixed = 'json')
 Curl::setDefaultJsonDecoder()
 Curl::setDefaultTimeout()
 Curl::setDefaultUserAgent()
@@ -228,7 +230,7 @@ Curl::setDefaultXmlDecoder()
 Curl::setDigestAuthentication($username, $password = '')
 Curl::setHeader($key, $value)
 Curl::setHeaders($headers)
-Curl::setJsonDecoder($function)
+Curl::setJsonDecoder($mixed)
 Curl::setMaxFilesize($bytes)
 Curl::setOpt($option, $value)
 Curl::setOpts($options)
@@ -236,9 +238,9 @@ Curl::setPort($port)
 Curl::setReferer($referer)
 Curl::setReferrer($referrer)
 Curl::setTimeout($seconds)
-Curl::setUrl($url, $data = array())
+Curl::setUrl($url, $mixed_data = '')
 Curl::setUserAgent($user_agent)
-Curl::setXmlDecoder($function)
+Curl::setXmlDecoder($mixed)
 Curl::success($callback)
 Curl::unsetHeader($key)
 Curl::verbose($on = true, $output = STDERR)
@@ -271,7 +273,7 @@ MultiCurl::setCookies($cookies)
 MultiCurl::setDigestAuthentication($username, $password = '')
 MultiCurl::setHeader($key, $value)
 MultiCurl::setHeaders($headers)
-MultiCurl::setJsonDecoder($function)
+MultiCurl::setJsonDecoder($mixed)
 MultiCurl::setOpt($option, $value)
 MultiCurl::setOpts($options)
 MultiCurl::setPort($port)
@@ -280,7 +282,7 @@ MultiCurl::setReferrer($referrer)
 MultiCurl::setTimeout($seconds)
 MultiCurl::setUrl($url)
 MultiCurl::setUserAgent($user_agent)
-MultiCurl::setXmlDecoder($function)
+MultiCurl::setXmlDecoder($mixed)
 MultiCurl::start()
 MultiCurl::success($callback)
 MultiCurl::unsetHeader($key)

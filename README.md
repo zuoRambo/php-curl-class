@@ -16,6 +16,7 @@ PHP Curl Class makes it easy to send HTTP requests and integrate with web APIs.
 - [Quick Start and Examples](#quick-start-and-examples)
 - [Available Methods](#available-methods)
 - [Security](#security)
+- [Run Tests](#run-tests)
 - [Contribute](#contribute)
 
 ---
@@ -193,6 +194,7 @@ More examples are available under [/examples](https://github.com/php-curl-class/
 Curl::__construct($base_url = null)
 Curl::__destruct()
 Curl::__get($name)
+Curl::attemptRetry()
 Curl::beforeSend($callback)
 Curl::buildPostData($data)
 Curl::call()
@@ -202,6 +204,7 @@ Curl::delete($url, $query_parameters = array(), $data = array())
 Curl::download($url, $mixed_filename)
 Curl::error($callback)
 Curl::exec($ch = null)
+Curl::execDone()
 Curl::get($url, $data = array())
 Curl::getCookie($key)
 Curl::getInfo($opt = null)
@@ -237,6 +240,7 @@ Curl::setOpts($options)
 Curl::setPort($port)
 Curl::setReferer($referer)
 Curl::setReferrer($referrer)
+Curl::setRetry($mixed)
 Curl::setTimeout($seconds)
 Curl::setUrl($url, $mixed_data = '')
 Curl::setUserAgent($user_agent)
@@ -279,6 +283,7 @@ MultiCurl::setOpts($options)
 MultiCurl::setPort($port)
 MultiCurl::setReferer($referer)
 MultiCurl::setReferrer($referrer)
+MultiCurl::setRetry($mixed)
 MultiCurl::setTimeout($seconds)
 MultiCurl::setUrl($url)
 MultiCurl::setUserAgent($user_agent)
@@ -292,6 +297,15 @@ MultiCurl::verbose($on = true, $output = STDERR)
 ### Security
 
 See [SECURITY](https://github.com/php-curl-class/php-curl-class/blob/master/SECURITY.md) for security considerations.
+
+### Run Tests
+
+To run tests:
+
+    $ git clone https://github.com/php-curl-class/php-curl-class.git
+    $ cd php-curl-class/
+    $ composer update
+    $ ./tests/run.sh
 
 ### Contribute
 1. Check for open issues or open a new issue to start a discussion around a bug or feature.

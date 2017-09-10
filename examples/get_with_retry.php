@@ -3,15 +3,16 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use \Curl\Curl;
 
+$max_retries = 3;
+
 $curl = new Curl();
-$curl->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');
-$curl->setOpt(CURLOPT_NOBODY, true);
-$curl->setOpt(CURLOPT_HEADER, true);
-$curl->setUrl('https://httpbin.org/get');
-$curl->exec();
+$curl->setRetry($max_retries);
+$curl->get('https://httpbin.org/status/503');
 
 if ($curl->error) {
     echo 'Error: ' . $curl->errorCode . ': ' . $curl->errorMessage . "\n";
+    echo 'attempts: ' . $curl->attempts . "\n";
+    echo 'retries: ' . $curl->retries . "\n";
 } else {
     echo 'Response:' . "\n";
     var_dump($curl->response);

@@ -7,7 +7,7 @@ use Curl\Decoder;
 
 class Curl
 {
-    const VERSION = '7.3.1';
+    const VERSION = '7.4.0';
     const DEFAULT_TIMEOUT = 30;
 
     public $curl;
@@ -40,6 +40,12 @@ class Curl
     public $errorFunction = null;
     public $completeFunction = null;
     public $fileHandle = null;
+
+    public $attempts = 0;
+    public $retries = 0;
+    public $isChildOfMultiCurl = false;
+    public $remainingRetries = 0;
+    public $retryDecider = null;
 
     private $cookies = array();
     private $headers = array();
@@ -335,6 +341,8 @@ class Curl
      */
     public function exec($ch = null)
     {
+        $this->attempts += 1;
+
         if ($ch === null) {
             $this->responseCookies = array();
             $this->call($this->beforeSendFunction);
@@ -382,6 +390,22 @@ class Curl
         }
         $this->errorMessage = $this->curlError ? $this->curlErrorMessage : $this->httpErrorMessage;
 
+        // Allow multicurl to attempt retry as needed.
+        if ($this->isChildOfMultiCurl) {
+            return;
+        }
+
+        if ($this->attemptRetry()) {
+            return $this->exec($ch);
+        }
+
+        $this->execDone();
+
+        return $this->response;
+    }
+
+    public function execDone()
+    {
         if ($this->error) {
             $this->call($this->errorFunction);
         } else {
@@ -394,8 +418,6 @@ class Curl
         if (!($this->fileHandle === null)) {
             $this->downloadComplete($this->fileHandle);
         }
-
-        return $this->response;
     }
 
     /**
@@ -1011,6 +1033,25 @@ class Curl
     }
 
     /**
+     * Set Retry
+     *
+     * Number of retries to attempt or decider callable. Maximum number of
+     * attempts is $maximum_number_of_retries + 1.
+     *
+     * @access public
+     * @param  $mixed
+     */
+    public function setRetry($mixed)
+    {
+        if (is_callable($mixed)) {
+            $this->retryDecider = $mixed;
+        } elseif (is_int($mixed)) {
+            $maximum_number_of_retries = $mixed;
+            $this->remainingRetries = $maximum_number_of_retries;
+        }
+    }
+
+    /**
      * Set Timeout
      *
      * @access public
@@ -1044,6 +1085,31 @@ class Curl
     public function setUserAgent($user_agent)
     {
         $this->setOpt(CURLOPT_USERAGENT, $user_agent);
+    }
+
+    /**
+     * Attempt Retry
+     *
+     * @access public
+     */
+    public function attemptRetry()
+    {
+        $attempt_retry = false;
+        if ($this->error) {
+            if ($this->retryDecider === null) {
+                $attempt_retry = $this->remainingRetries >= 1;
+            } else {
+                $func = $this->retryDecider;
+                $attempt_retry = $func($this);
+            }
+            if ($attempt_retry) {
+                $this->retries += 1;
+                if ($this->remainingRetries) {
+                    $this->remainingRetries -= 1;
+                }
+            }
+        }
+        return $attempt_retry;
     }
 
     /**
@@ -1193,10 +1259,11 @@ class Curl
     {
         $query_string = '';
         if (!empty($mixed_data)) {
+            $query_mark = strpos($url, '?') > 0 ? '&' : '?';
             if (is_string($mixed_data)) {
-                $query_string .= '?' . $mixed_data;
+                $query_string .= $query_mark . $mixed_data;
             } elseif (is_array($mixed_data)) {
-                $query_string .= '?' . http_build_query($mixed_data, '', '&');
+                $query_string .= $query_mark . http_build_query($mixed_data, '', '&');
             }
         }
         return $url . $query_string;
